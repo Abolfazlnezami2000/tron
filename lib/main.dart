@@ -1,54 +1,50 @@
-
-
 import 'package:flutter/material.dart';
 
-import 'package:crypto/crypto.dart';
-import 'package:fast_base58/fast_base58.dart';
 import 'package:secp256k1/secp256k1.dart';
-import 'package:sha3/sha3.dart';
-import 'package:hex/hex.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:tron_test/test.dart';
 
 void main() async{
   print('Start');
 
-  var prik = PrivateKey.generate();
+  print("\n-----------------Generate Key Pair---------------\n");
+  // var prik = PrivateKey.generate();
+  var prik = PrivateKey.fromHex("0b4886320c73a788e78889983b55192a8131bad41b13702763b22c1360250000");
   print('Private Key is : ${prik.D}');
   var pubk = prik.publicKey;
-  String step1 = pubk.toString();
-  String step2 = step1.substring(2 , 130);
-  var sha3 = SHA3(256, KECCAK_PADDING, 256);
-  sha3.update(HEX.decode(step2));
-  var hash = sha3.digest();
-  var step3 = HEX.encode(hash).toString();
-  var step4 = step3.substring(24 , 64);
-  var step5 = '41' + step4;
-  var bytes = HEX.decode(step5);
-  var step6 = sha256.convert(bytes);
-  var step7 = sha256.convert(step6.bytes);
-  var step8 = step7.toString().substring(0 , 8);
-  var step9 = step5 + step8;
-  var publicKey = Base58Encode(HEX.decode(step9));
-  print('Public Key is : $publicKey');
 
+  var publicKey = publicBigIntToBase58(pubk);
+  print('Public Key is  : $publicKey');
 
   // Create 12 word
+  print("\n-----------------Private Key To Mnemonic 12 words---------------\n");
+  String words = bip39.entropyToMnemonic(prik.toHex());
+  print(" >>> 12 words : " + words);
 
-  String word = bip39.entropyToMnemonic(prik.toHex());
-  print(word);
+  print("\n-----------------Mnemonic 12 words to Private Key---------------\n");
+  String wordsEntropy = bip39.mnemonicToEntropy(words);
+  // print(" >>> entropy " + wordsEntropy);
 
-  String mooo = bip39.mnemonicToEntropy(word);
-  print(mooo);
-
-  var private1 = PrivateKey.fromHex(mooo);
+  var private1 = PrivateKey.fromHex(wordsEntropy);
   print('Private Key is : ${private1.D}');
   var public1 = private1.publicKey;
+  print('Public Key is  : ' + publicBigIntToBase58(public1));
 
-  // encript
+  /*
+    AES
+  */
+  print("             --------------            ");
+  print("-------------------AES-----------------");
 
-  print(encryptPrivateKeyByPassword(mooo,'testpass'));
+  // encrypt
+  print("\n-----------------Encrypt---------------\n");
+  print(" >>> hex :    " + wordsEntropy);
+  print(" >>> base64 : " + encryptPrivateKeyByPassword(wordsEntropy,'testpass'));
 
+  // decrypt
+  print("\n-----------------Decrypt---------------\n");
+  print(" >>> hex :    " + decryptPrivateKeyByPassword(encryptPrivateKeyByPassword(wordsEntropy,'testpass'),'testpass'));
+  print(" >>> hex :    " + decryptPrivateKeyByPassword("Ae5oc08yLmDIYksiNsMP6jYOB4+YAEPxZxzQezmegZcfdfORDshZgoetGMjF+1O7L6yReZrdDsM9RgOGS7yK/11VeX+yXP80eFNPRLv4ves=",'testpass'));
 
   print('End');
   runApp(MyApp());
