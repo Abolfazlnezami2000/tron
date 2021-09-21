@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:flutter/material.dart';
 import 'package:hex/hex.dart';
@@ -13,6 +15,15 @@ import 'abi.dart';
 final smartContractAddress = "TMnwEQ57Y5GmSFZFX3f4ptJJu97pq6o13M";
 
 void main() async{
+  // print("\n-----------------Run All Tests---------------\n");
+  // await tests();
+
+  File("/tron/QmbxRku7o3DtYZVEYcmZVS5sUTLPyU5vZW5uVHP6pQsyBQ").create();
+
+  runApp(MyApp());
+}
+
+void tests() async{
   print('Start');
 
   print(" balance >> " + decodeUint256("000000000000000000000000000000000000000000115eec47f6cf7e34fffa88".characters).toString());
@@ -77,7 +88,6 @@ void main() async{
   await broadCastTransaction(signedTransaction);
 
   print('End');
-  runApp(MyApp());
 }
 
 base58ToNormal(String addressBase58) async{
@@ -324,6 +334,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  var IBTBalance = '';
+  var TRXBalance = '';
+
+
+  void setIBTBalance() async{
+    IBTBalance = await getIBTBalance("41c57c69232a779d1da8d3ef8e0041dcbdb3a5634d0633da9e");
+  }
+  void setTRXBalance() async{
+    TRXBalance = await getTRXBalance("41c57c69232a779d1da8d3ef8e0041dcbdb3a5634d0633da9e");
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -338,6 +358,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    setIBTBalance();
+    setTRXBalance();
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -345,10 +367,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
+      backgroundColor: Colors.white24,
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("Tron"),
+        centerTitle: true,
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -370,8 +394,20 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image.network("https://ipfs.infura.io:5001/api/v0/cat?arg=QmbxRku7o3DtYZVEYcmZVS5sUTLPyU5vZW5uVHP6pQsyBQ"),
             Text(
-              'You have pushed the button this many times:',
+              'IBT balance : ',
+            ),
+            Text(
+              '$IBTBalance',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            Text(
+              'TRX balance : ',
+            ),
+            Text(
+              '$TRXBalance',
+              style: Theme.of(context).textTheme.headline4,
             ),
             Text(
               '$_counter',
