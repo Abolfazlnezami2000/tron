@@ -3,8 +3,13 @@
 /// https://github.com/nbltrust/dart-eth-abi-codec
 ///
 import 'dart:typed_data';
+import 'package:characters/src/extensions.dart';
 import 'package:convert/convert.dart';
 import 'package:hex/hex.dart';
+
+String encodeUint256(int b){
+  return b.toString();
+}
 
 BigInt decodeUint256(Iterable b) {
   var testB = b.skip(32).take(b.length).toList();
@@ -47,7 +52,13 @@ String decodeString(Iterable b) {
     testD = testD + element.toString();
   });
   String test = String.fromCharCodes(HEX.decode(testD));
-  return test.substring(test.indexOf("\f"), test.length);
+  String finalResult = "";
+  test.characters.forEach((element) {
+    if (element.hashCode != 1 ){
+      finalResult = finalResult + element;
+    }
+  });
+  return finalResult;
 }
 
 dynamic decodeType(String type, Iterable b) {
