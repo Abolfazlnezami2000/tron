@@ -55,5 +55,7 @@ publicBigIntToBase58(PublicKey pub) {
   var step9 = step5 + step8;
   var publicKey = Base58Encode(HEX.decode(step9));
 
+  print("step9 : " + step9);
+
   return publicKey;
 }
