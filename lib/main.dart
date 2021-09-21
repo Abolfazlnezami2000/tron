@@ -4,7 +4,13 @@ import 'package:secp256k1/secp256k1.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:tron_test/test.dart';
 
+import 'abi.dart';
+
 void main() async{
+  print(" balance >>------> " + decodeUint256("000000000000000000000000000000000000000000115eec47f6cf7e34fffa88".characters).toString());
+  print(" name >>------> " + decodeString("0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000c6920626f6f6b20746f6b656e0000000000000000000000000000000000000000".characters).toString());
+
+
   print('Start');
 
   print("\n-----------------Generate Key Pair---------------\n");
